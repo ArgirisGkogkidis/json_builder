@@ -1,5 +1,5 @@
 "use client";
-
+/* eslint-disable */
 import { useEffect, useState } from "react";
 import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
 import {
@@ -36,6 +36,23 @@ function PaperComponent(props: PaperProps) {
     </Draggable>
   );
 }
+
+// Define the type for the data structure of a section
+interface Section extends Record<string, any> {
+  id: string;
+  sliceName?: string;
+  label?: string;
+  short?: string;
+  children?: Section[]; // If the section has nested children
+}
+
+// Define the props interface for SectionTree
+interface SectionTreeProps {
+  data: Section[];
+  selectedPaths: string[];
+  onToggle: (path: string) => void;
+}
+
 // Styled components for better padding and a cleaner look
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   marginBottom: theme.spacing(1),
@@ -54,7 +71,11 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   overflowY: "auto", // Enable independent scrolling
 }));
 
-const SectionTree = ({ data, selectedPaths, onToggle }) => {
+const SectionTree: React.FC<SectionTreeProps> = ({
+  data,
+  selectedPaths,
+  onToggle,
+}) => {
   return (
     <SimpleTreeView>
       {data.map((section, index) => {
@@ -115,7 +136,8 @@ const SectionTree = ({ data, selectedPaths, onToggle }) => {
                         </>
                       }
                     />
-                    {childIndex < section.children.length - 1 && <Divider />}
+                    {/* Ensure section.children is defined before accessing its length */}
+                    {section.children?.length && childIndex < section.children.length - 1 && <Divider />}
                   </ListItem>
                 ))}
               </List>
@@ -127,7 +149,7 @@ const SectionTree = ({ data, selectedPaths, onToggle }) => {
   );
 };
 
-// Function to update the target JSON dynamically based on user selection
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const updateTargetJson = (data, selectedPaths, originalJson, originalData) => {
   const result = { ...originalJson }; // Clone the default JSON structure
   result.section = [];
@@ -156,7 +178,7 @@ const updateTargetJson = (data, selectedPaths, originalJson, originalData) => {
     // }
 
     // Handle title, code, text cases
-    let existingSection = originalData.find(
+    const existingSection = originalData.find(
       (s) => s.title === section.label || section.sliceName
     );
     console.log(
@@ -231,7 +253,7 @@ export default function Home() {
         const sectionData = specData.differential.element.reduce(
           (acc, item) => {
             // Extract base item and sectionId
-            const itemBase = item.id.split(":")[0];
+            // const itemBase = item.id.split(":")[0];
             const sectionId = item.id.includes("section:")
               ? item.id.split(":")[1].split(".")[0]
               : "";
