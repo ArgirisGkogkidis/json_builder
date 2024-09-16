@@ -189,8 +189,8 @@ const updateTargetJson = (data, selectedPaths, originalJson, originalData) => {
 export default function Home() {
   const [sections, setSections] = useState([]);
   const [selectedPaths, setSelectedPaths] = useState([]);
-  const [targetJson, setTargetJson] = useState(null);
-  const [exampleJsonData, setJsonData] = useState(null);
+  const [targetJson, setTargetJson] = useState({});
+  const [exampleJsonData, setJsonData] = useState([]);
   const [open, setOpen] = useState(false);
 
   const [specUrl, setSpecUrl] = useState(
@@ -284,7 +284,7 @@ export default function Home() {
   }, [specUrl, exampleUrl]);
 
   // Handle toggling of selected section paths
-  const handleToggleSection = (path) => {
+  const handleToggleSection = (path: any) => {
     const newSelectedPaths = selectedPaths.includes(path)
       ? selectedPaths.filter((p) => p !== path)
       : [...selectedPaths, path];
